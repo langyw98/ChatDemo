@@ -27,6 +27,9 @@ public class MessageBroadcastReceiver extends BroadcastReceiver {
 		String json = intent.getStringExtra("msg");
 		Log.i(Config.Tag,"message is " + json);
 		Toast.makeText(context, "message is " + json, Toast.LENGTH_LONG).show();
+		BmobMsg msg = new BmobMsg();
+		msg.setContent(json);
+		eventListener.onMessage(msg);
 		parseMessage(context, json);
 	}
 
@@ -41,7 +44,7 @@ public class MessageBroadcastReceiver extends BroadcastReceiver {
 					@Override
 					public void onSuccess(BmobMsg msg) {
 						// TODO Auto-generated method stub
-						eventListener.onMessage(msg);
+						
 						Toast.makeText(context, msg.getContent(), Toast.LENGTH_LONG).show();
 //						Log.i(Config.Tag, msg.getContent());
 					}

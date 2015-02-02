@@ -3,85 +3,87 @@ package cn.yang.bmobchat.activity;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
-import cn.bmob.im.BmobChatManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 import cn.bmob.im.BmobUserManager;
 import cn.bmob.im.bean.BmobChatUser;
 import cn.bmob.im.bean.BmobInvitation;
 import cn.bmob.im.bean.BmobMsg;
+import cn.bmob.im.db.BmobDB;
 import cn.bmob.im.inteface.EventListener;
-import cn.bmob.v3.listener.FindListener;
 import cn.yang.bmobchat.MessageBroadcastReceiver;
 import cn.yang.bmobchat.R;
+import cn.yang.bmobchat.adapter.FriendListAdapter;
 
-public class FriendListActivity extends Activity implements EventListener{
-	private String MsgCotent;
+public class FriendListActivity extends Activity implements EventListener,OnItemClickListener {
+
+	private ListView lv_friend; 
+	private List<BmobChatUser> friends;
+	private FriendListAdapter adapter;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_friendlist);
-		
+
 		BmobUserManager buManager = BmobUserManager.getInstance(this);
-		setTitle(buManager.getCurrentUser().getUsername());
-		
+
 		MessageBroadcastReceiver.eventListener = this;
+		init();
 	}
-	
-	public void BtnOnClick(View view){
-		switch(view.getId())
-		Toast.makeText(this, "test", Toast.LENGTH_LONG).show();
-		BmobUserManager buManager = BmobUserManager.getInstance(this);
-//		BmobChatUser curUser = buManager.getCurrentUser();
-		BmobChatUser targetUser = null;
-		buManager.queryUserById("88868bdf35", new FindListener<BmobChatUser>() {
 
-			@Override
-			public void onError(int arg0, String arg1) {
-				// TODO Auto-generated method stub
-				
-			}
 
-			@Override
-			public void onSuccess(List<BmobChatUser> arg0) {
-				// TODO Auto-generated method stub
-				BmobMsg msg = BmobMsg.createTextSendMsg(FriendListActivity.this, "88868bdf35", "Test send msg to 123");
-				BmobChatManager.getInstance(FriendListActivity.this).sendTextMessage(arg0.get(0), msg);
-			}
-		});
-
+	private void init() {
+		// TODO Auto-generated method stub
+		lv_friend = (ListView) findViewById(R.id.listview);
+		friends = BmobDB.create(this).getContactList();
+		adapter = new FriendListAdapter(this, friends);
+		lv_friend.setAdapter(adapter);
+		lv_friend.setOnItemClickListener(this);
 	}
+
 
 	@Override
 	public void onAddUser(BmobInvitation arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onMessage(BmobMsg arg0) {
 		// TODO Auto-generated method stub
-		MsgCotent = arg0.getContent();
 	}
 
 	@Override
 	public void onNetChange(boolean arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onOffline() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onReaded(String arg0, String arg1) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+		// TODO Auto-generated method stub
+		BmobChatUser bcUser = (BmobChatUser) adapter.getItem(position);
+		Intent intent = new Intent(this,ChatActivity.class);
+		intent.putExtra("target_user", bcUser);
+		startActivity(intent);
 	}
 }

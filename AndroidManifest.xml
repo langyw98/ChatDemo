@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name="cn.yang.bmobchat.activity.FriendListActivity"></activity>
-        
+        <activity android:name="cn.yang.bmobchat.activity.ChatActivity"></activity>
           <!-- IM聊天所需的Push start-->
         <service
             android:name="cn.bmob.push.lib.service.PushService"
